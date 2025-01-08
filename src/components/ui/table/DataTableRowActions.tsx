@@ -1,7 +1,12 @@
 import { getRecords, saveRecords } from "@/actions/tableActions";
 import { Button } from "../button";
 
-const DataTableRowActions = () => {
+type Props = {
+  saveRecords: () => Promise<void>;
+  getRecords: () => Promise<void>;
+};
+
+const DataTableRowActions = ({ saveRecords, getRecords }: Props) => {
   const addNewRow = () => {};
 
   return (
