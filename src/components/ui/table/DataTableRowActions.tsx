@@ -1,23 +1,26 @@
-import { getRecords, saveRecords } from "@/actions/tableActions";
+import { getRecords } from "@/features/employees/employeesSlice";
 import { Button } from "../button";
+import { useDispatch, useSelector } from "react-redux";
 
-type Props = {
-  saveRecords: () => Promise<void>;
-  getRecords: () => Promise<void>;
-};
-
-const DataTableRowActions = ({ saveRecords, getRecords }: Props) => {
+const DataTableRowActions = () => {
+  const dispatch = useDispatch();
   const addNewRow = () => {};
+
+  const handleGetRecords = () => {
+    dispatch(getRecords());
+  };
+
+  const handleSaveRecords = () => {};
 
   return (
     <div className="mb-8 w-full flex justify-between">
       <Button onClick={addNewRow} className="text-white bg-blue-600">
         Add
       </Button>
-      <Button onClick={saveRecords} className="text-white bg-green-700">
+      <Button onClick={handleSaveRecords} className="text-white bg-green-700">
         Save
       </Button>
-      <Button onClick={getRecords} className="text-white bg-red-600">
+      <Button onClick={handleGetRecords} className="text-white bg-red-600">
         Update
       </Button>
     </div>
