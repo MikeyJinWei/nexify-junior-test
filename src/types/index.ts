@@ -1,6 +1,6 @@
 export type Employee = {
-  name: string;
-  dateOfBirth: string;
-  salary: number;
-  address: string;
+  Name: string;
+  DateOfBirth: string;
+  Salary: number;
+  Address: string;
 };

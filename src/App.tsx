@@ -17,7 +17,7 @@ function App() {
     <div className="w-full h-screen p-4">
       <div className="w-full h-screen flex justify-center items-center">
         {/* TABLE CONTAINER */}
-        <div className="p-4 flex flex-col w-full max-w-5xl text-center">
+        <div className="p-4 max-w-5xl w-full flex flex-col text-center">
           <DataTableRowActions />
           <DataTable columns={columns} data={employees} />
         </div>
