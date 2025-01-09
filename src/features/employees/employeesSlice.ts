@@ -1,5 +1,6 @@
+import { RootState } from "@/app/store";
 import { Employee } from "@/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, Store } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export type EmployeesState = {
@@ -36,13 +37,12 @@ export const employeesSlice = createSlice({
     builder
       .addCase(getRecords.pending, (state, action) => {
         state.status = "loading";
-        state.Data = [];
       })
       .addCase(getRecords.fulfilled, (state, action) => {
         state.Success = action.payload.Success;
         state.Msg = action.payload.Msg;
         state.status = "succeeded";
-        state.Data = action.payload.Data || [];
+        state.Data = action.payload.Data;
       })
       .addCase(getRecords.rejected, (state, action) => {
         try {
@@ -60,9 +60,8 @@ export const employeesSlice = createSlice({
   },
 });
 
-export const getEmployeesData = (
-  state: ReturnType<typeof employeesSlice.reducer>
-) => state.Data;
-export const FetchEmployeesStatus = (state: any) => state.status;
+export const getAllEmployeesData = (state: RootState) => state.employees.Data;
+export const fetchEmployeesStatus = (state: RootState) =>
+  state.employees.status;
 export const {} = employeesSlice.actions;
 export default employeesSlice.reducer;

@@ -5,22 +5,13 @@ import DataTableRowActions from "./components/ui/table/DataTableRowActions";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getRecords,
-  getEmployeesData,
-  FetchEmployeesStatus,
+  getAllEmployeesData,
+  fetchEmployeesStatus,
 } from "./features/employees/employeesSlice";
 import { useEffect } from "react";
 
 function App() {
-  const dispatch = useDispatch();
-  const employees = [];
-  // const employees = useSelector(getEmployeesData);
-  const status = useSelector(FetchEmployeesStatus);
-
-  // useEffect(() => {
-  //   if (status !== "succeeded") {
-  //     dispatch();
-  //   }
-  // }, [status, dispatch]);
+  const employees = useSelector(getAllEmployeesData);
 
   return (
     <div className="w-full h-screen p-4">
