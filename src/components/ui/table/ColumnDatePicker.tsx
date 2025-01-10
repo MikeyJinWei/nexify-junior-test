@@ -8,17 +8,17 @@ import { format } from "date-fns";
 
 type Props = {
   DateOfBirth: string;
+  id: string;
 };
 
-const ColumnDatePicker = ({ DateOfBirth }: Props) => {
+const ColumnDatePicker = ({ DateOfBirth, id }: Props) => {
   const [date, setDate] = useState<Date>();
 
   return (
-    <Popover>
+    <Popover key={id}>
       <PopoverTrigger asChild>
         <Button
-          variant={"outline"}
-          disabled={true}
+          variant="outline"
           className={cn(
             "w-full justify-between text-left font-normal",
             !date && "text-muted-foreground"

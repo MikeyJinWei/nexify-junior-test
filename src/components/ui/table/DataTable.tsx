@@ -14,12 +14,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface DataTableProps<TData, TValue> {
+interface CustomTData {
+  id: string;
+}
+
+interface DataTableProps<TData extends CustomTData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends CustomTData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -55,7 +59,7 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length && data ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                key={row.id}
+                key={row.original.id}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (

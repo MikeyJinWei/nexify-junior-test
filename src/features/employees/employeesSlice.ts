@@ -1,6 +1,6 @@
 import { RootState } from "@/app/store";
 import { Employee } from "@/types";
-import { createAsyncThunk, createSlice, Store } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export type EmployeesState = {
@@ -29,10 +29,27 @@ export const getRecords = createAsyncThunk("employees/getRecords", async () => {
   }
 });
 
+export const saveRecord = createAsyncThunk(
+  "employees/saveRecord",
+  async (newRecord: Employee, { getState }) => {
+    console.log("saveRecord");
+  }
+);
+
 export const employeesSlice = createSlice({
   name: "employees",
   initialState,
-  reducers: {},
+  reducers: {
+    addRow: (state) => {
+      state.Data.unshift({
+        Name: "",
+        DateOfBirth: new Date().toISOString(),
+        Salary: 0,
+        Address: "",
+        id: nanoid(),
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getRecords.pending, (state, action) => {
@@ -42,7 +59,11 @@ export const employeesSlice = createSlice({
         state.Success = action.payload.Success;
         state.Msg = action.payload.Msg;
         state.status = "succeeded";
-        state.Data = action.payload.Data;
+        // state.Data = action.payload.Data;
+        state.Data = action.payload.Data.map((employee: Employee) => ({
+          ...employee,
+          id: nanoid(),
+        }));
       })
       .addCase(getRecords.rejected, (state, action) => {
         try {
@@ -63,5 +84,5 @@ export const employeesSlice = createSlice({
 export const getAllEmployeesData = (state: RootState) => state.employees.Data;
 export const fetchEmployeesStatus = (state: RootState) =>
   state.employees.status;
-export const {} = employeesSlice.actions;
+export const { addRow } = employeesSlice.actions;
 export default employeesSlice.reducer;

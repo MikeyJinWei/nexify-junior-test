@@ -2,16 +2,13 @@ import "./App.css";
 import { DataTable } from "./components/ui/table/DataTable";
 import { columns } from "./components/ui/table/columns";
 import DataTableRowActions from "./components/ui/table/DataTableRowActions";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getRecords,
-  getAllEmployeesData,
-  fetchEmployeesStatus,
-} from "./features/employees/employeesSlice";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { getAllEmployeesData } from "./features/employees/employeesSlice";
 
 function App() {
   const employees = useSelector(getAllEmployeesData);
+
+  console.log("employees", employees);
 
   return (
     <div className="w-full h-screen p-4">

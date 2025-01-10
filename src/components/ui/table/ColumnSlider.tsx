@@ -2,13 +2,15 @@ import { Slider } from "../slider";
 
 type Props = {
   defaultValue: number;
+  id: string;
 };
 
-const ColumnSlider = ({ defaultValue }: Props) => {
+const ColumnSlider = ({ defaultValue, id }: Props) => {
   return (
     <Slider
+      key={id}
       defaultValue={[defaultValue]}
-      max={1000000}
+      max={300000}
       step={1}
       disabled={true}
       className="SliderThumb"
