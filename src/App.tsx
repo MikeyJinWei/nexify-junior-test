@@ -1,11 +1,22 @@
 import "./App.css";
-import { Button } from "@/components/ui/button";
+import { DataTable } from "./components/table/DataTable";
+import { columns } from "./components/table/columns";
+import DataTableRowActions from "./components/table/DataTableRowActions";
+import { getAllEmployeesData } from "./features/employees/employeesSlice";
+import { useAppSelector } from "./app/store";
 
 function App() {
+  const employees = useAppSelector(getAllEmployeesData);
+
   return (
-    <div>
-      <h1 className="text-red-500">Hello World</h1>
-      <Button>Click me</Button>
+    <div className="w-full p-4">
+      <div className="w-full min-h-screen flex justify-center items-center">
+        {/* TABLE CONTAINER */}
+        <div className="p-4 max-w-5xl w-full flex flex-col text-center">
+          <DataTableRowActions />
+          <DataTable columns={columns} data={employees} />
+        </div>
+      </div>
     </div>
   );
 }

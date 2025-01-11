@@ -1,3 +1,10 @@
+@tailwind components;
+@tailwind utilities;
+
+.SliderThumb > span > span:first-child {
+  @apply bg-blue-500 border-blue-500;
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
