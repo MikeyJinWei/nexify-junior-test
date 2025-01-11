@@ -9,7 +9,11 @@ export const columns: ColumnDef<Employee>[] = [
     accessorKey: "Name",
     header: "Name",
     cell: ({ row }) => (
-      <ColumnInput id={row.id} defaultValue={row.original.Name} />
+      <ColumnInput
+        id={row.id}
+        defaultValue={row.original.Name}
+        accessorKey="Name"
+      />
     ),
   },
   {
@@ -17,7 +21,11 @@ export const columns: ColumnDef<Employee>[] = [
     header: "Birthday",
     cell: ({ row }) => {
       return (
-        <ColumnDatePicker id={row.id} DateOfBirth={row.original.DateOfBirth} />
+        <ColumnDatePicker
+          id={row.id}
+          DateOfBirth={row.original.DateOfBirth}
+          accessorKey="DateOfBirth"
+        />
       );
     },
   },
@@ -25,14 +33,22 @@ export const columns: ColumnDef<Employee>[] = [
     accessorKey: "Salary",
     header: "Salary",
     cell: ({ row }) => (
-      <ColumnSlider id={row.id} defaultValue={row.original.Salary} />
+      <ColumnSlider
+        id={row.id}
+        defaultValue={row.original.Salary}
+        accessorKey="Salary"
+      />
     ),
   },
   {
     accessorKey: "Address",
     header: "Address",
     cell: ({ row }) => (
-      <ColumnInput id={row.id} defaultValue={row.original.Address} />
+      <ColumnInput
+        id={row.id}
+        defaultValue={row.original.Address}
+        accessorKey="Address"
+      />
     ),
   },
 ];

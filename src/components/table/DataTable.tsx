@@ -2,6 +2,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  TableState,
   useReactTable,
 } from "@tanstack/react-table";
 

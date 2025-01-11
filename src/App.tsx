@@ -1,12 +1,12 @@
 import "./App.css";
-import { DataTable } from "./components/ui/table/DataTable";
-import { columns } from "./components/ui/table/columns";
-import DataTableRowActions from "./components/ui/table/DataTableRowActions";
-import { useSelector } from "react-redux";
+import { DataTable } from "./components/table/DataTable";
+import { columns } from "./components/table/columns";
+import DataTableRowActions from "./components/table/DataTableRowActions";
 import { getAllEmployeesData } from "./features/employees/employeesSlice";
+import { useAppSelector } from "./app/store";
 
 function App() {
-  const employees = useSelector(getAllEmployeesData);
+  const employees = useAppSelector(getAllEmployeesData);
 
   console.log("employees", employees);
 

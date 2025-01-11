@@ -1,5 +1,5 @@
 import { addRow, getRecords } from "@/features/employees/employeesSlice";
-import { Button } from "../button";
+import { Button } from "../ui/button";
 import { useAppDispatch } from "@/app/store";
 
 const DataTableRowActions = () => {

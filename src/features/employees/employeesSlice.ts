@@ -1,6 +1,11 @@
 import { RootState } from "@/app/store";
 import { Employee } from "@/types";
-import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  nanoid,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export type EmployeesState = {
@@ -29,30 +34,60 @@ export const getRecords = createAsyncThunk("employees/getRecords", async () => {
   }
 });
 
-export const saveRecord = createAsyncThunk(
-  "employees/saveRecord",
-  async (newRecord: Employee, { getState }) => {
-    console.log("saveRecord");
-  }
-);
+// export const saveRecord = createAsyncThunk(
+//   "employees/saveRecord",
+//   async (newRecord: Employee, { getState }) => {
+//     console.log("saveRecord");
+//   }
+// );
 
 export const employeesSlice = createSlice({
   name: "employees",
   initialState,
   reducers: {
-    addRow: (state) => {
-      state.Data.unshift({
-        Name: "",
-        DateOfBirth: new Date().toISOString(),
-        Salary: 0,
-        Address: "",
-        id: nanoid(),
-      });
+    addRow: {
+      reducer: (state, action: PayloadAction<Employee>) => {
+        state.Data.unshift(action.payload);
+      },
+      prepare: () => {
+        return {
+          payload: {
+            Name: "",
+            DateOfBirth: new Date().toISOString(),
+            Salary: 0,
+            Address: "",
+            id: nanoid(),
+          },
+        };
+      },
+    },
+    updateRow: {
+      reducer: <Key extends keyof Employee>(
+        state: EmployeesState,
+        action: PayloadAction<{
+          id: string;
+          field: keyof Employee;
+          value: Employee[Key];
+        }>
+      ) => {
+        const { id, field, value } = action.payload;
+        const employee = state.Data.find((employee) => employee.id === id);
+        if (employee) {
+          (employee[field] as Employee[Key]) = value;
+        }
+      },
+      prepare: <Key extends keyof Employee>(
+        id: string,
+        field: Key,
+        value: Employee[Key]
+      ) => ({
+        payload: { id, field, value },
+      }),
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getRecords.pending, (state, action) => {
+      .addCase(getRecords.pending, (state) => {
         state.status = "loading";
       })
       .addCase(getRecords.fulfilled, (state, action) => {
@@ -84,5 +119,5 @@ export const employeesSlice = createSlice({
 export const getAllEmployeesData = (state: RootState) => state.employees.Data;
 export const fetchEmployeesStatus = (state: RootState) =>
   state.employees.status;
-export const { addRow } = employeesSlice.actions;
+export const { addRow, updateRow } = employeesSlice.actions;
 export default employeesSlice.reducer;
