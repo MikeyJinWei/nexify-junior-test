@@ -1,5 +1,7 @@
 import { RootState } from "@/app/store";
+import { GET_RECORDS_URL, SAVE_RECORDS_URL } from "@/constants/api";
 import { Employee, EmployeesApiResponse, EmployeesState } from "@/types";
+import { parseErrorMessage } from "@/utils";
 import {
   createAsyncThunk,
   createSlice,
@@ -16,31 +18,16 @@ const initialState: EmployeesState = {
   Data: [],
 };
 
-function parseErrorMessage(errorMsg?: string) {
-  try {
-    const { Success, Msg } = JSON.parse(errorMsg || "{}");
-    return {
-      Success: !!Success,
-      Msg: Msg || "An error occurred",
-    };
-  } catch {
-    return {
-      Success: false,
-      Msg: "Failed to parse error message",
-    };
-  }
-}
-
 export const getRecords = createAsyncThunk<EmployeesApiResponse>(
   "employees/getRecords",
   async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/Record/GetRecords`
-      );
+      const { data } = await axios.get(GET_RECORDS_URL);
       return data;
     } catch (err: any) {
-      throw new Error(JSON.stringify({ Success: false, Msg: err.message }));
+      throw new Error(
+        JSON.stringify({ Success: false, Msg: err.message as unknown })
+      );
     }
   }
 );
@@ -50,13 +37,12 @@ export const saveRecord = createAsyncThunk<EmployeesApiResponse, Employee[]>(
   async (employees: Employee[]) => {
     try {
       const employeesToSave = employees.map(({ id, ...rest }) => rest);
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/Record/SaveRecords`,
-        employeesToSave
-      );
+      const { data } = await axios.post(SAVE_RECORDS_URL, employeesToSave);
       return data;
     } catch (err: any) {
-      throw new Error(JSON.stringify({ Success: false, Msg: err.message }));
+      throw new Error(
+        JSON.stringify({ Success: false, Msg: err.message as unknown })
+      );
     }
   }
 );
