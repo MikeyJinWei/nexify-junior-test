@@ -7,7 +7,7 @@ import { Employee } from "@/types";
 type Props = {
   defaultValue: number;
   id: string;
-  accessorKey: string;
+  accessorKey: keyof Employee;
 };
 
 const ColumnSlider = ({ defaultValue, id, accessorKey }: Props) => {
@@ -17,8 +17,8 @@ const ColumnSlider = ({ defaultValue, id, accessorKey }: Props) => {
   const handleValueChange = (newValue: number[]) => {
     const newSalary = newValue[0];
     if (newValue && newValue[0] !== salary) {
-      setSalary(newValue[0]);
-      dispatch(updateRow(id, accessorKey as keyof Employee, newSalary));
+      setSalary(newSalary);
+      dispatch(updateRow({ id, field: accessorKey, value: newSalary }));
     }
   };
 

@@ -1,9 +1,15 @@
-import { addRow, getRecords } from "@/features/employees/employeesSlice";
+import {
+  addRow,
+  getAllEmployeesData,
+  getRecords,
+  saveRecord,
+} from "@/features/employees/employeesSlice";
 import { Button } from "../ui/button";
-import { useAppDispatch } from "@/app/store";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 
 const DataTableRowActions = () => {
   const dispatch = useAppDispatch();
+  const employees = useAppSelector(getAllEmployeesData);
 
   const handleAddRow = () => {
     dispatch(addRow());
@@ -13,14 +19,16 @@ const DataTableRowActions = () => {
     dispatch(getRecords());
   };
 
-  const handleSaveRecords = () => {};
+  const handleSaveRecords = () => {
+    dispatch(saveRecord(employees));
+  };
 
   return (
     <div className="mb-8 w-full flex justify-between">
-      <Button onClick={handleAddRow} className="text-white bg-blue-600">
+      <Button onClick={handleAddRow} variant="info">
         Add
       </Button>
-      <Button onClick={handleSaveRecords} className="text-white bg-green-700">
+      <Button onClick={handleSaveRecords} variant="submit">
         Save
       </Button>
       <Button onClick={handleGetRecords} variant="destructive">

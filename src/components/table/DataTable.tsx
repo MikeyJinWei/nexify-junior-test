@@ -2,7 +2,6 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  TableState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -35,7 +34,6 @@ export function DataTable<TData extends CustomTData, TValue>({
   });
 
   return (
-    // <div className="rounded-md border">
     <div className="rounded-md">
       <Table>
         <TableHeader>
@@ -57,7 +55,7 @@ export function DataTable<TData extends CustomTData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length && data ? (
+          {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.original.id}

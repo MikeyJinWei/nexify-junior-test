@@ -8,11 +8,9 @@ import { useAppSelector } from "./app/store";
 function App() {
   const employees = useAppSelector(getAllEmployeesData);
 
-  console.log("employees", employees);
-
   return (
-    <div className="w-full h-screen p-4">
-      <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full p-4">
+      <div className="w-full min-h-screen flex justify-center items-center">
         {/* TABLE CONTAINER */}
         <div className="p-4 max-w-5xl w-full flex flex-col text-center">
           <DataTableRowActions />

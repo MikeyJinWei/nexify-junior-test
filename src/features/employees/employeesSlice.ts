@@ -1,5 +1,5 @@
 import { RootState } from "@/app/store";
-import { Employee } from "@/types";
+import { Employee, EmployeesApiResponse, EmployeesState } from "@/types";
 import {
   createAsyncThunk,
   createSlice,
@@ -7,13 +7,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import axios from "axios";
-
-export type EmployeesState = {
-  Success: boolean;
-  Msg: null | string;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  Data: Employee[];
-};
+import { format } from "date-fns";
 
 const initialState: EmployeesState = {
   Success: false,
@@ -22,24 +16,50 @@ const initialState: EmployeesState = {
   Data: [],
 };
 
-export const getRecords = createAsyncThunk("employees/getRecords", async () => {
+function parseErrorMessage(errorMsg?: string) {
   try {
-    const res = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/api/Record/GetRecords`
-    );
-    console.log(res.data);
-    return res.data;
-  } catch (err: any) {
-    throw new Error(JSON.stringify({ Success: false, Msg: err.message }));
+    const { Success, Msg } = JSON.parse(errorMsg || "{}");
+    return {
+      Success: !!Success,
+      Msg: Msg || "An error occurred",
+    };
+  } catch {
+    return {
+      Success: false,
+      Msg: "Failed to parse error message",
+    };
   }
-});
+}
 
-// export const saveRecord = createAsyncThunk(
-//   "employees/saveRecord",
-//   async (newRecord: Employee, { getState }) => {
-//     console.log("saveRecord");
-//   }
-// );
+export const getRecords = createAsyncThunk<EmployeesApiResponse>(
+  "employees/getRecords",
+  async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/api/Record/GetRecords`
+      );
+      return data;
+    } catch (err: any) {
+      throw new Error(JSON.stringify({ Success: false, Msg: err.message }));
+    }
+  }
+);
+
+export const saveRecord = createAsyncThunk<EmployeesApiResponse, Employee[]>(
+  "employees/saveRecord",
+  async (employees: Employee[]) => {
+    try {
+      const employeesToSave = employees.map(({ id, ...rest }) => rest);
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/Record/SaveRecords`,
+        employeesToSave
+      );
+      return data;
+    } catch (err: any) {
+      throw new Error(JSON.stringify({ Success: false, Msg: err.message }));
+    }
+  }
+);
 
 export const employeesSlice = createSlice({
   name: "employees",
@@ -50,10 +70,12 @@ export const employeesSlice = createSlice({
         state.Data.unshift(action.payload);
       },
       prepare: () => {
+        const date = new Date();
+        const validDate = format(date, "yyyy-MM-dd'T'00:00:00");
         return {
           payload: {
             Name: "",
-            DateOfBirth: new Date().toISOString(),
+            DateOfBirth: validDate,
             Salary: 0,
             Address: "",
             id: nanoid(),
@@ -61,32 +83,24 @@ export const employeesSlice = createSlice({
         };
       },
     },
-    updateRow: {
-      reducer: <Key extends keyof Employee>(
-        state: EmployeesState,
-        action: PayloadAction<{
-          id: string;
-          field: keyof Employee;
-          value: Employee[Key];
-        }>
-      ) => {
-        const { id, field, value } = action.payload;
-        const employee = state.Data.find((employee) => employee.id === id);
-        if (employee) {
-          (employee[field] as Employee[Key]) = value;
-        }
-      },
-      prepare: <Key extends keyof Employee>(
-        id: string,
-        field: Key,
-        value: Employee[Key]
-      ) => ({
-        payload: { id, field, value },
-      }),
+    updateRow: (
+      state: EmployeesState,
+      action: PayloadAction<{
+        id: string;
+        field: keyof Employee;
+        value: Employee[keyof Employee];
+      }>
+    ) => {
+      const { id, field, value } = action.payload;
+      const employee = state.Data.find((employee) => employee.id === id);
+      if (employee) {
+        (employee[field] as Employee[keyof Employee]) = value;
+      }
     },
   },
   extraReducers: (builder) => {
     builder
+      // getRecords
       .addCase(getRecords.pending, (state) => {
         state.status = "loading";
       })
@@ -94,24 +108,33 @@ export const employeesSlice = createSlice({
         state.Success = action.payload.Success;
         state.Msg = action.payload.Msg;
         state.status = "succeeded";
-        // state.Data = action.payload.Data;
-        state.Data = action.payload.Data.map((employee: Employee) => ({
-          ...employee,
-          id: nanoid(),
-        }));
+        state.Data =
+          action.payload.Data?.map((employee: Employee) => ({
+            ...employee,
+            id: nanoid(),
+          })) || [];
       })
       .addCase(getRecords.rejected, (state, action) => {
-        try {
-          const errorData = JSON.parse(action.error.message!);
-          state.Success = errorData.Success;
-          state.Msg = errorData.Msg;
-        } catch (parseError) {
-          state.Msg = "Failed to fetch data";
-        } finally {
-          state.Success = false;
-          state.status = "failed";
-          state.Data = [];
-        }
+        const errorData = parseErrorMessage(action.error.message);
+        state.Success = errorData.Success;
+        state.Msg = errorData.Msg;
+        state.status = "failed";
+        state.Data = [];
+      })
+      // saveRecords
+      .addCase(saveRecord.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(saveRecord.fulfilled, (state, action) => {
+        state.Success = action.payload.Success;
+        state.Msg = action.payload.Msg;
+        state.status = "succeeded";
+      })
+      .addCase(saveRecord.rejected, (state, action) => {
+        const errorData = parseErrorMessage(action.error.message);
+        state.Success = errorData.Success;
+        state.Msg = errorData.Msg;
+        state.status = "failed";
       });
   },
 });

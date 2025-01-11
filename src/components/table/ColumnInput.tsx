@@ -18,8 +18,7 @@ const ColumnInput = ({ defaultValue, id, accessorKey }: Props) => {
     const target = e.target as HTMLInputElement;
     const newValue = target.value;
     setValue(newValue);
-    // dispatch(updateRow({ id, field: accessorKey, value: newValue }));
-    dispatch(updateRow(id, accessorKey, newValue));
+    dispatch(updateRow({ id, field: accessorKey, value: newValue }));
   };
 
   return (

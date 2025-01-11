@@ -1,4 +1,4 @@
-import { Employee } from "@/types";
+import { Employee, EMPLOYEE_KEYS } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import ColumnDatePicker from "./ColumnDatePicker";
 import ColumnInput from "./ColumnInput";
@@ -6,48 +6,48 @@ import ColumnSlider from "./ColumnSlider";
 
 export const columns: ColumnDef<Employee>[] = [
   {
-    accessorKey: "Name",
-    header: "Name",
+    accessorKey: EMPLOYEE_KEYS.NAME,
+    header: EMPLOYEE_KEYS.NAME,
     cell: ({ row }) => (
       <ColumnInput
-        id={row.id}
+        id={row.original.id}
         defaultValue={row.original.Name}
-        accessorKey="Name"
+        accessorKey={EMPLOYEE_KEYS.NAME}
       />
     ),
   },
   {
-    accessorKey: "DateOfBirth",
+    accessorKey: EMPLOYEE_KEYS.DATE_OF_BIRTH,
     header: "Birthday",
     cell: ({ row }) => {
       return (
         <ColumnDatePicker
-          id={row.id}
+          id={row.original.id}
           DateOfBirth={row.original.DateOfBirth}
-          accessorKey="DateOfBirth"
+          accessorKey={EMPLOYEE_KEYS.DATE_OF_BIRTH}
         />
       );
     },
   },
   {
-    accessorKey: "Salary",
-    header: "Salary",
+    accessorKey: EMPLOYEE_KEYS.SALARY,
+    header: EMPLOYEE_KEYS.SALARY,
     cell: ({ row }) => (
       <ColumnSlider
-        id={row.id}
+        id={row.original.id}
         defaultValue={row.original.Salary}
-        accessorKey="Salary"
+        accessorKey={EMPLOYEE_KEYS.SALARY}
       />
     ),
   },
   {
-    accessorKey: "Address",
-    header: "Address",
+    accessorKey: EMPLOYEE_KEYS.ADDRESS,
+    header: EMPLOYEE_KEYS.ADDRESS,
     cell: ({ row }) => (
       <ColumnInput
-        id={row.id}
+        id={row.original.id}
         defaultValue={row.original.Address}
-        accessorKey="Address"
+        accessorKey={EMPLOYEE_KEYS.ADDRESS}
       />
     ),
   },

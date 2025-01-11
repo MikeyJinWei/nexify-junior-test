@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { format } from "date-fns";
+import { format, parseISO, startOfDay } from "date-fns";
 import { useAppDispatch } from "@/app/store";
 import { updateRow } from "@/features/employees/employeesSlice";
 import { Employee } from "@/types";
@@ -17,20 +17,14 @@ type Props = {
 };
 
 const ColumnDatePicker = ({ DateOfBirth, id, accessorKey }: Props) => {
-  const [date, setDate] = useState(new Date(DateOfBirth));
+  const [date, setDate] = useState(startOfDay(parseISO(DateOfBirth)));
 
   const dispatch = useAppDispatch();
   const handleDateChange: SelectSingleEventHandler = (newDate) => {
-    if (newDate) {
+    if (newDate && newDate !== date) {
       setDate(() => newDate);
-      dispatch(
-        // updateRow({
-        //   id,
-        //   field: accessorKey,
-        //   value: newDate.toISOString(),
-        // })
-        updateRow(id, accessorKey, newDate.toISOString())
-      );
+      const validDate = format(newDate, "yyyy-MM-dd'T'00:00:00");
+      dispatch(updateRow({ id, field: accessorKey, value: validDate }));
     }
   };
 
