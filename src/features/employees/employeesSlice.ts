@@ -1,14 +1,13 @@
+import { getRecords, saveRecords } from "@/api/Record/record";
 import { RootState } from "@/app/store";
-import { GET_RECORDS_URL, SAVE_RECORDS_URL } from "@/constants/api";
+import { parseErrorMessage } from "@/lib/utils";
 import { Employee, EmployeesApiResponse, EmployeesState } from "@/types";
-import { parseErrorMessage } from "@/utils";
 import {
   createAsyncThunk,
   createSlice,
   nanoid,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import axios from "axios";
 import { format } from "date-fns";
 
 const initialState: EmployeesState = {
@@ -18,11 +17,11 @@ const initialState: EmployeesState = {
   Data: [],
 };
 
-export const getRecords = createAsyncThunk<EmployeesApiResponse>(
+export const getRecordsThunk = createAsyncThunk<EmployeesApiResponse>(
   "employees/getRecords",
   async () => {
     try {
-      const { data } = await axios.get(GET_RECORDS_URL);
+      const { data } = await getRecords();
       return data;
     } catch (err: any) {
       throw new Error(
@@ -32,20 +31,20 @@ export const getRecords = createAsyncThunk<EmployeesApiResponse>(
   }
 );
 
-export const saveRecord = createAsyncThunk<EmployeesApiResponse, Employee[]>(
-  "employees/saveRecord",
-  async (employees: Employee[]) => {
-    try {
-      const employeesToSave = employees.map(({ id, ...rest }) => rest);
-      const { data } = await axios.post(SAVE_RECORDS_URL, employeesToSave);
-      return data;
-    } catch (err: any) {
-      throw new Error(
-        JSON.stringify({ Success: false, Msg: err.message as unknown })
-      );
-    }
+export const saveRecordsThunk = createAsyncThunk<
+  EmployeesApiResponse,
+  Employee[]
+>("employees/saveRecord", async (employees: Employee[]) => {
+  try {
+    const employeesToSave = employees.map(({ id, ...rest }) => rest);
+    const { data } = await saveRecords(employeesToSave);
+    return data;
+  } catch (err: any) {
+    throw new Error(
+      JSON.stringify({ Success: false, Msg: err.message as unknown })
+    );
   }
-);
+});
 
 export const employeesSlice = createSlice({
   name: "employees",
@@ -86,11 +85,11 @@ export const employeesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // getRecords
-      .addCase(getRecords.pending, (state) => {
+      // getRecordsThunk
+      .addCase(getRecordsThunk.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(getRecords.fulfilled, (state, action) => {
+      .addCase(getRecordsThunk.fulfilled, (state, action) => {
         state.Success = action.payload.Success;
         state.Msg = action.payload.Msg;
         state.status = "succeeded";
@@ -100,23 +99,23 @@ export const employeesSlice = createSlice({
             id: nanoid(),
           })) || [];
       })
-      .addCase(getRecords.rejected, (state, action) => {
+      .addCase(getRecordsThunk.rejected, (state, action) => {
         const errorData = parseErrorMessage(action.error.message);
         state.Success = errorData.Success;
         state.Msg = errorData.Msg;
         state.status = "failed";
         state.Data = [];
       })
-      // saveRecords
-      .addCase(saveRecord.pending, (state) => {
+      // saveRecordsThunk
+      .addCase(saveRecordsThunk.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(saveRecord.fulfilled, (state, action) => {
+      .addCase(saveRecordsThunk.fulfilled, (state, action) => {
         state.Success = action.payload.Success;
         state.Msg = action.payload.Msg;
         state.status = "succeeded";
       })
-      .addCase(saveRecord.rejected, (state, action) => {
+      .addCase(saveRecordsThunk.rejected, (state, action) => {
         const errorData = parseErrorMessage(action.error.message);
         state.Success = errorData.Success;
         state.Msg = errorData.Msg;

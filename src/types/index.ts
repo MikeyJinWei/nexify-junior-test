@@ -6,6 +6,13 @@ export type Employee = {
   Address: string;
 };
 
+export type EmployeesToSave = {
+  Name: string;
+  DateOfBirth: string;
+  Salary: number;
+  Address: string;
+};
+
 export enum EMPLOYEE_KEYS {
   NAME = "Name",
   DATE_OF_BIRTH = "DateOfBirth",
