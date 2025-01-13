@@ -1,8 +1,8 @@
 import {
   addRow,
   getAllEmployeesData,
-  getRecords,
-  saveRecord,
+  getRecordsThunk,
+  saveRecordsThunk,
 } from "@/features/employees/employeesSlice";
 import { Button } from "../ui/button";
 import { useAppDispatch, useAppSelector } from "@/app/store";
@@ -16,11 +16,11 @@ const DataTableRowActions = () => {
   };
 
   const handleGetRecords = () => {
-    dispatch(getRecords());
+    dispatch(getRecordsThunk());
   };
 
   const handleSaveRecords = () => {
-    dispatch(saveRecord(employees));
+    dispatch(saveRecordsThunk(employees));
   };
 
   return (
